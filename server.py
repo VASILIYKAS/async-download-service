@@ -28,9 +28,12 @@ async def archive(request):
     catalog_path = config['photos_path']
     delay_enabled = config['delay_enabled']
 
-    archive_hash = request.match_info.get('archive_hash', '')
+    archive_hash = request.match_info['archive_hash']
     photos_path = Path(catalog_path) / archive_hash
 
+    if not archive_hash:
+        raise web.HTTPNotFound(text='Некорректный архив', content_type='text/html')
+    
     if not photos_path.exists():
         raise web.HTTPNotFound(text=f'Архив не существует или был удален', content_type='text/html')
 
